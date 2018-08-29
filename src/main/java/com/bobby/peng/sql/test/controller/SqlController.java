@@ -28,17 +28,17 @@ public class SqlController {
     private SqlService sqlService;
 
     @RequestMapping("/each")
-    public void each() {
+    public String each() {
         long id = sqlService.getMaxId();
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < 1000; id++, i++) {
             sqlService.insertSimple(id, i);
         }
-        System.out.println(System.currentTimeMillis() - startTime);
+        return "each 方法总耗时：" + (System.currentTimeMillis() - startTime);
     }
 
     @RequestMapping("/pool")
-    public void pool() throws ExecutionException, InterruptedException {
+    public String pool() throws ExecutionException, InterruptedException {
         ListeningExecutorService pool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(20
                 , new DefaultThreadFactory()));
         ;
@@ -60,7 +60,7 @@ public class SqlController {
 
         }
         System.out.println("总记录 ： " + Futures.successfulAsList(futures).get().size());
-        System.out.println(System.currentTimeMillis() - startTime);
+        return "pool 方法总耗时：" + (System.currentTimeMillis() - startTime);
     }
 
     class DefaultThreadFactory implements ThreadFactory {
