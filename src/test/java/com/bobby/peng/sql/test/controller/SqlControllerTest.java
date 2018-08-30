@@ -20,12 +20,17 @@ public class SqlControllerTest {
 
     @Test
     public void eachTest() {
-        sqlController.each();
+        System.out.println(sqlController.each());
     }
 
 
     @Test
     public void poolTest() throws ExecutionException, InterruptedException {
-        sqlController.pool();
+        System.out.println(sqlController.pool());
+    }
+
+    @Test
+    public void deletedPoolTest() throws ExecutionException, InterruptedException {
+        System.out.println(sqlController.deletedPool());
     }
 }

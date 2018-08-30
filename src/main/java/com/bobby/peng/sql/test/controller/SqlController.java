@@ -63,6 +63,31 @@ public class SqlController {
         return "pool 方法总耗时：" + (System.currentTimeMillis() - startTime);
     }
 
+    @RequestMapping("deleted/pool")
+    public String deletedPool() throws ExecutionException, InterruptedException {
+        ListeningExecutorService pool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(200
+                , new DefaultThreadFactory()));
+        ;
+        long startTime = System.currentTimeMillis();
+        List<ListenableFuture<Integer>> futures = Lists.newArrayList();
+
+        long id = sqlService.getDeletedTableMaxId();
+        for (int i = 0; i < 1000000; id++, i++) {
+            long finalId = id;
+            try {
+                futures.add(pool.submit(() -> {
+                    sqlService.insertDeletedTable(finalId);
+                    return 1;
+                }));
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+
+        }
+        System.out.println("总记录 ： " + Futures.successfulAsList(futures).get().size());
+        return "deletedPool 方法总耗时：" + (System.currentTimeMillis() - startTime);
+    }
+
     class DefaultThreadFactory implements ThreadFactory {
         private final AtomicInteger poolNumber = new AtomicInteger(1);
         private final ThreadGroup group;
